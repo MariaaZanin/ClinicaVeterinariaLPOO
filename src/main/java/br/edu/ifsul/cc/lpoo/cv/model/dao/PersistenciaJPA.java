@@ -1,0 +1,61 @@
+package br.edu.ifsul.cc.lpoo.cv.model.dao;
+
+import br.edu.ifsul.cc.lpoo.cv.model.Produto;
+import br.edu.ifsul.cc.lpoo.cv.model.Receita;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.util.List;
+
+public class PersistenciaJPA implements InterfacePersistencia {
+
+    //QUESTAO 3
+    public EntityManagerFactory factory;
+    public EntityManager entity;
+
+    public PersistenciaJPA() {
+        factory = Persistence.createEntityManagerFactory("MariaEduarda_cv_lpoo_2022");
+        entity = factory.createEntityManager();
+    }
+
+    @Override
+    public Boolean conexaoAberta() {
+        return entity.isOpen();
+    }
+
+    @Override
+    public void fecharConexao() {
+        entity.close();
+    }
+
+    @Override
+    public Object find(Class c, Object id) throws Exception {
+        return null;
+    }
+
+    @Override
+    public void persist(Object o) throws Exception {
+
+    }
+
+    @Override
+    public void remover(Object o) throws Exception {
+
+    }
+
+    public List mostraTudo(Class c) throws Exception{
+        return null;
+    }
+
+    @Override
+    public List<Produto> listProdutos() throws Exception {
+        throw new UnsupportedOperationException("Funcionalidade indisponivel no momento.");
+    }
+
+    @Override
+    public List<Receita> listReceitas() throws Exception {
+        throw new UnsupportedOperationException("Funcionalidade indisponivel no momento.");
+    }
+
+}
