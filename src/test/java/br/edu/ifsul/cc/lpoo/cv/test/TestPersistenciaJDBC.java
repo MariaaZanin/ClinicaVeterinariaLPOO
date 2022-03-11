@@ -29,7 +29,7 @@ public class TestPersistenciaJDBC{
 
     }
 
-    @Test
+    //@Test
     public void testPersistencia() throws Exception{
         PersistenciaJDBC persistencia = new PersistenciaJDBC();
         if(persistencia.conexaoAberta()) {
@@ -191,7 +191,7 @@ public class TestPersistenciaJDBC{
         PersistenciaJDBC persistencia = new PersistenciaJDBC();
 
         if(persistencia.conexaoAberta()) {
-            Produto p = (Produto) persistencia.find(Produto.class, 9);
+            Produto p = (Produto) persistencia.find(Produto.class, 3);
 
             if(p == null) {
                 System.out.println("Elemento nao encontrado");
@@ -208,12 +208,12 @@ public class TestPersistenciaJDBC{
     }
 
 
-    //@Test
+    @Test
     public void testFindReceita() throws Exception { // BUSCA RECEITA POR ID
         PersistenciaJDBC persistencia = new PersistenciaJDBC();
 
         if(persistencia.conexaoAberta()) {
-            Receita r = (Receita) persistencia.find(Receita.class, 9);
+            Receita r = (Receita) persistencia.find(Receita.class, 2);
 
             if(r == null) {
                 System.out.println("Elemento nao encontrado");
@@ -231,6 +231,33 @@ public class TestPersistenciaJDBC{
             persistencia.fecharConexao();
         } else {
             System.out.println("Nao abriu a conexao com BD via JDBC");
+        }
+    }
+
+    //@Test
+    public void testListPersistenciaPessoa() throws Exception {
+
+        // recupera a lista de Pessoas
+
+        //imprimir na tela os dados de cada jogador e as suas respectivas patentes
+
+        //alterar o jogador ao algum dado da tabela associativa.
+
+        //remove as patentes do jogador (tb_jogador_patente), uma a uma
+
+        //caso a lista de jogadores esteja vazia, insere um ou mais jogadores , bem como, vincula ao menos uma patente no jogador (tb_jogador_patente)
+        PersistenciaJDBC persistencia = new PersistenciaJDBC();
+        if(persistencia.conexaoAberta()){
+            System.out.println("abriu a conexao com o BD via JDBC");
+
+            List<Fornecedor> list = persistencia.listFornecedor();
+
+            list.forEach(j->System.out.println("Fornecedor: "+j.getNome()));
+
+            persistencia.fecharConexao();
+
+        }else{
+            System.out.println("Nao abriu a conexao com o BD via JDBC");
         }
     }
 

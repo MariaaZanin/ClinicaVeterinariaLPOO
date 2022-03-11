@@ -4,6 +4,7 @@ import br.edu.ifsul.cc.lpoo.cv.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class PersistenciaJDBC implements InterfacePersistencia{
@@ -118,7 +119,26 @@ public class PersistenciaJDBC implements InterfacePersistencia{
                 return r;
             }
 
+        }else if(c == Fornecedor.class){
+
+            PreparedStatement ps = this.con.prepareStatement("select cnpj, ie, cpf from tb_fornecedor where cpf = ?");
+            ps.setString(1, id.toString());
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()){
+
+                Fornecedor f = new Fornecedor();
+                f.setCnpj(rs.getString("Cnpj"));
+                f.setIe(rs.getString("Ie"));
+                f.setCpf(rs.getString("cpf"));
+
+                ps.close();
+
+                return f;
+            }
         }
+
         return null;
     }
 
@@ -196,14 +216,76 @@ public class PersistenciaJDBC implements InterfacePersistencia{
 
                 ps.execute();
             }
-        }
+        } else if (o instanceof Fornecedor) {
+            Fornecedor f = (Fornecedor) o;
 
+            if (f.getData_cadastro() == null) {
+                PreparedStatement ps_pessoa = this.con.prepareStatement("insert into tb_pessoa"
+                        + " (cpf, rg, nome, senha, numero_celular, email, cep, endereco, complemento, data_cadastro, data_nascimento, tipo)"
+                        + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, now(), ?, 'fornecedor') ");
+                ps_pessoa.setString(1, f.getCpf());
+                ps_pessoa.setString(2, f.getRg());
+                ps_pessoa.setString(3, f.getNome());
+                ps_pessoa.setString(4, f.getSenha());
+                ps_pessoa.setString(5, f.getNumero_celular());
+                ps_pessoa.setString(6, f.getEmail());
+                ps_pessoa.setString(7, f.getCep());
+                ps_pessoa.setString(8, f.getEndereco());
+                ps_pessoa.setString(9, f.getComplemento());
+                ps_pessoa.setTimestamp(10, new Timestamp(f.getData_nascimento().getTimeInMillis()));
+
+                ps_pessoa.execute();
+
+                PreparedStatement ps_fornecedor = this.con.prepareStatement("insert into tb_fornecedor "
+                        + "(cnpj, ie, cpf) values (?, ?, ?) ");
+                ps_fornecedor.setString(1, f.getCnpj());
+                ps_fornecedor.setString(2, f.getIe());
+                ps_fornecedor.setString(3, f.getCpf());
+
+                ps_fornecedor.execute();
+                //System.out.println("O Fornecedor com CPF = " + f.getCpf() + " foi cadastrado com sucesso!\n");
+            } else {
+                PreparedStatement ps_pessoa = this.con.prepareStatement("update tb_pessoa set"
+                        + " rg = ?, nome = ?, senha = ?, numero_celular = ?, email = ?, cep= ?,"
+                        + " endereco = ?, complemento = ?, data_nascimento = ?, tipo = 'fornecedor' where cpf = ?");
+                ps_pessoa.setString(1, f.getRg());
+                ps_pessoa.setString(2, f.getNome());
+                ps_pessoa.setString(3, f.getSenha());
+                ps_pessoa.setString(4, f.getNumero_celular());
+                ps_pessoa.setString(5, f.getEmail());
+                ps_pessoa.setString(6, f.getCep());
+                ps_pessoa.setString(7, f.getEndereco());
+                ps_pessoa.setString(8, f.getComplemento());
+                ps_pessoa.setTimestamp(9, new Timestamp(f.getData_nascimento().getTimeInMillis()));
+                ps_pessoa.setString(10, f.getCpf());
+
+                ps_pessoa.execute();
+
+                PreparedStatement ps_fornecedor = this.con.prepareStatement("update tb_fornecedor set cnpj = ?, ie = ? where cpf = ?; ");
+                ps_fornecedor.setString(1, f.getCnpj());
+                ps_fornecedor.setString(2, f.getIe());
+                ps_fornecedor.setString(3, f.getCpf());
+
+                ps_fornecedor.execute();
+            }
+        }
     }
 
     @Override
     public void remover(Object o) throws Exception{
-        if(o instanceof Produto){
+        System.out.println("ENTROU JDBC REMOVER");
+        if(o instanceof Fornecedor){
+            System.out.println("ENTROU REMOVER");
+            Fornecedor f = (Fornecedor) o;
+            System.out.println("ENTROU REMOVERrrrr");
+            PreparedStatement ps1 = this.con.prepareStatement("delete from tb_fornecedor where cpf = ?");// deleta a informação da tabela receita_fornecedor
+            ps1.setString(1, f.getCpf());
+            ps1.execute();
 
+            PreparedStatement ps2 = this.con.prepareStatement("delete from tb_pessoa where cpf = ?");// deleta a informação da tabela receita_pessoa
+            ps2.setString(1, f.getCpf());
+            ps2.execute();
+        }else if(o instanceof Produto){
             Produto p = (Produto) o; //converter o para o e que é do tipo Produto
 
             PreparedStatement ps2 = this.con.prepareStatement("delete from tb_receita_produto where produto_id = ? ");// deleta a informação da tabela receita_produto
@@ -224,6 +306,7 @@ public class PersistenciaJDBC implements InterfacePersistencia{
             PreparedStatement ps = this.con.prepareStatement("delete from tb_receita where id = ?");
             ps.setInt(1, r.getId());
             ps.execute();
+
         }
     }
 
@@ -346,4 +429,64 @@ public class PersistenciaJDBC implements InterfacePersistencia{
         return null;
     }
 
+    @Override
+    public List<Fornecedor> listFornecedor() throws Exception {
+        List<Fornecedor> lista = null;
+
+        PreparedStatement ps = this.con.prepareStatement("select pes.cpf, pes.cep, pes.complemento, pes.data_nascimento, pes.data_cadastro, pes.email, pes.endereco, pes.nome, pes.numero_celular, pes.rg, pes.senha, forn.ie, forn.cnpj from tb_pessoa as pes INNER JOIN tb_fornecedor as forn on pes.cpf = forn.cpf;\n");
+
+        ResultSet rs = ps.executeQuery();
+
+        lista = new ArrayList();
+        while(rs.next()) {
+            Fornecedor forn = new Fornecedor();
+            forn.setCpf(rs.getString("cpf"));
+            forn.setComplemento(rs.getString("complemento"));
+            forn.setCep(rs.getString("cep"));
+
+            Calendar dtCadastro = Calendar.getInstance();
+            dtCadastro.setTimeInMillis(rs.getDate("data_cadastro").getTime());
+            forn.setData_cadastro(dtCadastro);
+            if(rs.getDate("data_nascimento") != null) {
+                Calendar dtNascimento = Calendar.getInstance();
+                dtNascimento.setTimeInMillis(rs.getDate("data_nascimento").getTime());
+                forn.setData_nascimento(dtNascimento);
+            }
+
+            forn.setEmail(rs.getString("email"));
+            forn.setEndereco(rs.getString("endereco"));
+            forn.setNome(rs.getString("nome"));
+            forn.setNumero_celular(rs.getString("numero_celular"));
+            forn.setRg(rs.getString("rg"));
+            forn.setSenha(rs.getString("senha"));
+            forn.setCnpj(rs.getString("cnpj"));
+            forn.setIe(rs.getString("ie"));
+
+            lista.add(forn);
+        }
+
+        return lista;
+    }
+
+    @Override
+    public Fornecedor doLogin(String cpf, String senha) throws Exception {
+
+        Fornecedor f = null;
+
+        PreparedStatement ps =
+                this.con.prepareStatement("select p.cpf, p.senha from tb_pessoa p where p.cpf = ? and p.senha = ? ");
+
+        ps.setString(1, cpf);
+        ps.setString(2, senha);
+
+        ResultSet rs = ps.executeQuery();//o ponteiro do REsultSet inicialmente está na linha -1
+
+        if(rs.next()){//se a matriz (ResultSet) tem uma linha
+            f = new Fornecedor();
+            f.setCpf(rs.getString("cpf"));
+        }
+
+        ps.close();
+        return f;
+    }
 }

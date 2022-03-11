@@ -12,8 +12,7 @@ public class Cliente extends Pessoa{
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar data_ultima_visita;
-
-    //O QUE É ISSO?? AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    
     @OneToMany(mappedBy = "cliente")
     private List<Pet> pets;
 

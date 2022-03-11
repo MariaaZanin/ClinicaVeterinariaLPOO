@@ -1,5 +1,6 @@
 package br.edu.ifsul.cc.lpoo.cv.model.dao;
 
+import br.edu.ifsul.cc.lpoo.cv.model.Fornecedor;
 import br.edu.ifsul.cc.lpoo.cv.model.Produto;
 import br.edu.ifsul.cc.lpoo.cv.model.Receita;
 
@@ -58,4 +59,20 @@ public class PersistenciaJPA implements InterfacePersistencia {
         throw new UnsupportedOperationException("Funcionalidade indisponivel no momento.");
     }
 
+    @Override
+    public List<Fornecedor> listFornecedor() throws Exception {
+        throw new UnsupportedOperationException("Funcionalidade indisponivel no momento.");
+    }
+
+    @Override
+    public Fornecedor doLogin(String nome, String senha) throws Exception {
+
+        List<Fornecedor> list = entity.createNamedQuery("Pessoa.login").setParameter("paramN", nome).setParameter("paramS", senha).getResultList();
+        if(list.isEmpty()){
+            return null;
+        }else{
+            return list.get(0);
+        }
+
+    }
 }

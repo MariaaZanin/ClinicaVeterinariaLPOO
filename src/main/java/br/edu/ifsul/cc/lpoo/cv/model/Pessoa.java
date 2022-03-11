@@ -7,6 +7,10 @@ import javax.persistence.*;
 @Table(name = "tb_pessoa")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "tipo")
+@NamedQueries({
+        @NamedQuery(name="Pessoa.login",
+                query="SELECT p From Pessoa p where p.cpf = :paramN and p.senha = :paramS")
+})
 public class Pessoa {
 
     @Id
@@ -131,4 +135,11 @@ public class Pessoa {
     public void setComplemento(String complemento) {
         this.complemento = complemento;
     }
+
+
+    @Override
+    public String toString(){
+        return nome;
+    }
+
 }

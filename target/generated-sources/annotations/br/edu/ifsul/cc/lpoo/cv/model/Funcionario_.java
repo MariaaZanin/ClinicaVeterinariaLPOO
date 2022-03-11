@@ -5,9 +5,9 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.7.7.v20200504-rNA", date="2022-01-31T09:44:45")
+@Generated(value="EclipseLink-2.7.7.v20200504-rNA", date="2022-03-02T08:25:01")
 @StaticMetamodel(Funcionario.class)
-public class Funcionario_ { 
+public class Funcionario_ extends Pessoa_ {
 
     public static volatile SingularAttribute<Funcionario, String> numero_pis;
     public static volatile SingularAttribute<Funcionario, Cargo> cargo;
