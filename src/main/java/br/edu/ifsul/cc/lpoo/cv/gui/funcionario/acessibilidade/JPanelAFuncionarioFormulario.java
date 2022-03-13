@@ -118,10 +118,10 @@ public class JPanelAFuncionarioFormulario extends JPanel implements ActionListen
             //validacao do formulario
             String msg = "";
             if(txfNickname.getText().trim().length() < 4)
-                msg += "Nome invalido, informe um nome com mais de 4 digitos \n";
+                msg += "Nome invalido, informe um nome com ao menos 4 digitos \n";
 
             else if(new String(txfSenha.getPassword()).trim().length() < 3){
-                msg += "Senha invalida, informe uma senha com mais de 3 digitos \n";
+                msg += "Senha invalida, informe uma senha com ao menos 3 digitos \n";
 
             }else if(txfCpf.getText().trim().length() != 11){
                 msg += "Cpf invalido, informe um CPF com 11 digitos \n";
@@ -129,8 +129,14 @@ public class JPanelAFuncionarioFormulario extends JPanel implements ActionListen
             }else if(txfCep.getText().trim().length() != 8){
                 msg += "CEP invalido, informe um CEP com 8 digitos \n";
 
+            }else if(txfComplemento.getText().trim().length() < 5){
+                msg += "Complemento invalido, informe um complemento com ao menos 5 digitos \n";
+
             }else if(txfEmail.getText().trim().length() < 10){
-                msg += "Email invalido, informe um email com mais de 10 digitos \n";
+                msg += "Email invalido, informe um email com ao menos 10 digitos \n";
+
+            }else if(txfEndereco.getText().trim().length() < 7){
+                msg += "Endereco invalido, informe um endereco com ao menos 7 digitos \n";
 
             }else if(txfNumeroCelular.getText().trim().length() < 9){
                 msg += "Telefone invalido, informe um email com ao menos 9 digitos \n";

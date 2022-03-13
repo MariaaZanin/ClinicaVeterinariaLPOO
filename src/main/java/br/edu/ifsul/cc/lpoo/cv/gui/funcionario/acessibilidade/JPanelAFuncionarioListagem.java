@@ -158,9 +158,9 @@ public class JPanelAFuncionarioListagem extends JPanel implements ActionListener
 
                         DefaultTableModel model = (DefaultTableModel) tblListagem.getModel(); //recuperacao do modelo da table
                         Vector linha = (Vector) model.getDataVector().get(indice);//recupera o vetor de dados da linha selecionada
-                        System.out.println("Linha: " + linha);
+                        //System.out.println("Linha: " + linha);
                         f = (Funcionario) persistencia.find(f.getClass(), linha.get(1));
-                        System.out.println("Funcionario: " + f);
+                        //System.out.println("Funcionario: " + f);
                         pnlAFuncionario.showTela("tela_funcionario_formulario");
                         pnlAFuncionario.getFormulario().setFuncionarioFormulario(f);
                     }catch (Exception ex){

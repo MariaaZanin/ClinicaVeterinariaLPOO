@@ -25,7 +25,7 @@ public class TestPersistenciaJPA {
         if(persistencia.conexaoAberta()){
             System.out.println("abriu a conexao com o BD via JPA");
 
-            Pessoa p = persistencia.doLogin("teste@", "1234");
+            Pessoa p = persistencia.doLogin("22222222222", "1234");
 
             if(p == null){
                 p = new Pessoa();
