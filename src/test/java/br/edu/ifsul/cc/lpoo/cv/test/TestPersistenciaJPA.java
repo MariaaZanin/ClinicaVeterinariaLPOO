@@ -1,6 +1,7 @@
 package br.edu.ifsul.cc.lpoo.cv.test;
 
 import br.edu.ifsul.cc.lpoo.cv.model.Fornecedor;
+import br.edu.ifsul.cc.lpoo.cv.model.Pessoa;
 import br.edu.ifsul.cc.lpoo.cv.model.dao.PersistenciaJPA;
 import org.junit.Test;
 
@@ -24,14 +25,14 @@ public class TestPersistenciaJPA {
         if(persistencia.conexaoAberta()){
             System.out.println("abriu a conexao com o BD via JPA");
 
-            Fornecedor f = persistencia.doLogin("teste@", "1234");
+            Pessoa p = persistencia.doLogin("teste@", "1234");
 
-            if(f == null){
-                f = new Fornecedor();
-                f.setNome("maria");
-                f.setSenha("1234");
+            if(p == null){
+                p = new Pessoa();
+                p.setCpf("00000000");
+                p.setSenha("1234");
 
-                persistencia.persist(f);
+                persistencia.persist(p);
                 System.out.println("Cadastrou nova pessoa!");
             }else{
                 System.out.println("Encontrou pessoa cadastrado!");

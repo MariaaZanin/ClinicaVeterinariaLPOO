@@ -1,21 +1,18 @@
-package br.edu.ifsul.cc.lpoo.cv.gui.fornecedor.acessibilidade;
+package br.edu.ifsul.cc.lpoo.cv.gui.funcionario.acessibilidade;
 
 import br.edu.ifsul.cc.lpoo.cv.Controle;
-//import br.edu.ifsul.cc.lpoo.cv.model.Endereco;
-import br.edu.ifsul.cc.lpoo.cv.model.Fornecedor;
+import br.edu.ifsul.cc.lpoo.cv.model.Cargo;
+import br.edu.ifsul.cc.lpoo.cv.model.Funcionario;
 import br.edu.ifsul.cc.lpoo.cv.model.Pessoa;
-import br.edu.ifsul.cc.lpoo.cv.model.Receita;
 import javafx.scene.input.DataFormat;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -28,10 +25,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.border.LineBorder;
 
-public class JPanelAFornecedorFormulario extends JPanel implements ActionListener {
+public class JPanelAFuncionarioFormulario extends JPanel implements ActionListener {
 
-        private JPanelAFornecedor pnlAFornecedor;
+        private JPanelAFuncionario pnlAFuncionario;
         private Controle controle;
 
         private BorderLayout borderLayout;
@@ -47,11 +45,14 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
         private JLabel lblSenha;
         private JPasswordField txfSenha;
 
-        private JLabel lblCnpj;
-        private JTextField txfCnpj;
+        private JLabel lblCargo;
+        private JComboBox cbxCargo;
 
-        private JLabel lblIe;
-        private JTextField txfIe;
+        private JLabel lblCtps;
+        private JTextField txfCtps;
+
+        private JLabel lblPis;
+        private JTextField txfPis;
 
         private JLabel lblCpf;
         private JTextField txfCpf;
@@ -80,53 +81,68 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
         private JLabel lblRg;
         private JTextField txfRg;
 
-        private Fornecedor fornecedor;
+        private Funcionario funcionario;
         private SimpleDateFormat format;
 
         private JPanel pnlSul;
         private JButton btnGravar;
         private JButton btnCancelar;
 
-        public JPanelAFornecedorFormulario(JPanelAFornecedor pnlAFornecedor, Controle controle) {
+        public JPanelAFuncionarioFormulario(JPanelAFuncionario pnlAFuncionario, Controle controle) {
 
-            this.pnlAFornecedor = pnlAFornecedor;
+            this.pnlAFuncionario = pnlAFuncionario;
             this.controle = controle;
 
             initComponents();
-
         }
 
-        public Fornecedor getFornecedorbyFormulario() {
+        public void populaCargo() {
+            cbxCargo.removeAllItems();
+            DefaultComboBoxModel model = (DefaultComboBoxModel) cbxCargo.getModel();
 
-            //validacao do formulario
+            model.addElement("Selecione");
+            try {
+                List<Cargo> listCargos = Arrays.asList(Cargo.values());
+
+                listCargos.forEach(c -> {
+                    model.addElement(c);
+                });
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Erro ao listar os Cargos:"+e.getLocalizedMessage(), "Cargos", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+
+        public Funcionario getFuncionariobyFormulario() {
+
             //validacao do formulario
             String msg = "";
-            if (txfNickname.getText().trim().length() < 4)
+            if(txfNickname.getText().trim().length() < 4)
                 msg += "Nome invalido, informe um nome com mais de 4 digitos \n";
 
-            else if (new String(txfSenha.getPassword()).trim().length() < 3) {
+            else if(new String(txfSenha.getPassword()).trim().length() < 3){
                 msg += "Senha invalida, informe uma senha com mais de 3 digitos \n";
 
-            } else if (txfCpf.getText().trim().length() != 11) {
+            }else if(txfCpf.getText().trim().length() != 11){
                 msg += "Cpf invalido, informe um CPF com 11 digitos \n";
 
-            } else if (txfCep.getText().trim().length() != 8) {
+            }else if(txfCep.getText().trim().length() != 8){
                 msg += "CEP invalido, informe um CEP com 8 digitos \n";
 
-            } else if (txfEmail.getText().trim().length() < 10) {
+            }else if(txfEmail.getText().trim().length() < 10){
                 msg += "Email invalido, informe um email com mais de 10 digitos \n";
 
-            } else if (txfNumeroCelular.getText().trim().length() < 9) {
+            }else if(txfNumeroCelular.getText().trim().length() < 9){
                 msg += "Telefone invalido, informe um email com ao menos 9 digitos \n";
 
-            } else if (txfRg.getText().trim().length() != 10) {
+            }else if(txfRg.getText().trim().length() != 10){
                 msg += "RG invalido, informe um RG com 10 digitos \n";
 
-            } else if (txfCnpj.getText().trim().length() < 10) {
-                msg += "CNPJ invalido, informe um CNPJ com ao menos 10 digitos \n";
+            }else if(txfCtps.getText().trim().length() != 8){
+                msg += "CTPS invalido, informe um CTPS com 8 digitos \n";
 
-            } else if (txfIe.getText().trim().length() < 6) {
-                msg += "IE invalido, informe um IE com ao menos 6 digitos \n";
+            }else if(txfPis.getText().trim().length() < 10){
+                msg += "PIS invalido, informe um PIS com ao menos 10 digitos \n";
             } else {
                 Calendar dtNascimento = Calendar.getInstance();
                 try {
@@ -137,14 +153,16 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
                     msg = "Data de nascimento invalida, informe a data de nascimento no formato: dd/MM/yyyy \n";
                 }
             }
-            if (msg != "") {
+            if(msg != ""){
                 JOptionPane.showMessageDialog(this, msg);
-            } else {
-                Fornecedor f = new Fornecedor();
+            }else {
+
+                Funcionario f = new Funcionario();
                 f.setNome(txfNickname.getText().trim());
                 f.setSenha(new String(txfSenha.getPassword()).trim());
-                f.setCnpj(txfCnpj.getText().trim());
-                f.setIe(txfIe.getText().trim());
+                f.setCargo((Cargo) cbxCargo.getSelectedItem());
+                f.setNumero_ctps(txfCtps.getText().trim());
+                f.setNumero_pis(txfPis.getText().trim());
                 f.setCpf(txfCpf.getText().trim());
                 f.setCep(txfCep.getText().trim());
                 f.setComplemento(txfComplemento.getText().trim());
@@ -153,6 +171,7 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
                 f.setNumero_celular(txfNumeroCelular.getText().trim());
                 f.setRg(txfRg.getText().trim());
                 Calendar data_nasc = Calendar.getInstance();
+
                 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
                 try {
                     data_nasc.setTime(formato.parse(txfDataNascimento.getText().trim()));
@@ -162,22 +181,23 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
                 }
                 f.setData_nascimento(data_nasc);
 
-                if (fornecedor != null)
-                    f.setData_cadastro(fornecedor.getData_cadastro());
-
+                if (funcionario != null) {
+                    f.setData_cadastro(funcionario.getData_cadastro());
+                }
                 return f;
             }
 
             return null;
         }
 
-        public void setFornecedorFormulario(Fornecedor f) {
+        public void setFuncionarioFormulario(Funcionario f) {
 
             if (f == null) {//se o parametro estiver nullo, limpa o formulario
                 txfNickname.setText("");
                 txfSenha.setText("");
-                txfCnpj.setText("");
-                txfIe.setText("");
+                cbxCargo.setSelectedIndex(0);
+                txfCtps.setText("");
+                txfPis.setText("");
                 txfCpf.setText("");
                 txfCep.setText("");
                 txfComplemento.setText("");
@@ -189,26 +209,27 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
                 txfDataCadastro.setText("");
 
                 txfNickname.setEditable(true);
-                fornecedor = null;
+                funcionario = null;
             } else {
-                fornecedor = f;
+                funcionario = f;
                 //txfNickname.setEditable(false);
-                txfNickname.setText(fornecedor.getNome());
-                txfSenha.setText(fornecedor.getSenha());
-                txfCnpj.setText(fornecedor.getCnpj());
-                txfIe.setText(fornecedor.getIe());
+                txfNickname.setText(funcionario.getNome());
+                txfSenha.setText(funcionario.getSenha());
+                cbxCargo.getModel().setSelectedItem(funcionario.getCargo());
+                txfCtps.setText(funcionario.getNumero_ctps());
+                txfPis.setText(funcionario.getNumero_pis());
                 txfCpf.setEditable(false);
-                txfCpf.setText(fornecedor.getCpf());
-                txfCep.setText(fornecedor.getCep());
-                txfComplemento.setText(fornecedor.getComplemento());
+                txfCpf.setText(funcionario.getCpf());
+                txfCep.setText(funcionario.getCep());
+                txfComplemento.setText(funcionario.getComplemento());
                 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
                 //System.out.println("FORMATO: " + formato.format(fornecedor.getData_nascimento().getTime()));
-                txfDataNascimento.setText(formato.format(fornecedor.getData_nascimento().getTime()));
-                txfEmail.setText(fornecedor.getEmail());
-                txfEndereco.setText(fornecedor.getEndereco());
-                txfNumeroCelular.setText(fornecedor.getNumero_celular());
-                txfRg.setText(fornecedor.getRg());
-                txfDataCadastro.setText(formato.format(fornecedor.getData_cadastro().getTime()));
+                txfDataNascimento.setText(formato.format(funcionario.getData_nascimento().getTime()));
+                txfEmail.setText(funcionario.getEmail());
+                txfEndereco.setText(funcionario.getEndereco());
+                txfNumeroCelular.setText(funcionario.getNumero_celular());
+                txfRg.setText(funcionario.getRg());
+                txfDataCadastro.setText(formato.format(funcionario.getData_cadastro().getTime()));
 
             }
 
@@ -258,7 +279,7 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
             posicionador.gridx = 0;
             pnlDadosCadastrais.add(lblCpf, posicionador);
 
-            txfCpf = new JTextField(20);
+            txfCpf = new JTextField(14);
             posicionador = new GridBagConstraints();
             posicionador.gridy = 2;
             posicionador.gridx = 1;
@@ -370,31 +391,44 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
             posicionador.anchor = GridBagConstraints.LINE_START;
             pnlDadosCadastrais.add(txfRg, posicionador);
 
-            lblCnpj = new JLabel("CNPJ:");
+            lblCargo = new JLabel("Cargo:");
             posicionador = new GridBagConstraints();
             posicionador.gridy = 11;
             posicionador.gridx = 0;
-            pnlDadosCadastrais.add(lblCnpj, posicionador);
+            pnlDadosCadastrais.add(lblCargo, posicionador);
 
-            txfCnpj = new JTextField(18);
+            cbxCargo = new JComboBox();
             posicionador = new GridBagConstraints();
             posicionador.gridy = 11;
             posicionador.gridx = 1;
             posicionador.anchor = GridBagConstraints.LINE_START;
-            pnlDadosCadastrais.add(txfCnpj, posicionador);
+            pnlDadosCadastrais.add(cbxCargo, posicionador);
 
-            lblIe = new JLabel("IE:");
+            lblCtps = new JLabel("Numero CTPS:");
             posicionador = new GridBagConstraints();
             posicionador.gridy = 12;
             posicionador.gridx = 0;
-            pnlDadosCadastrais.add(lblIe, posicionador);
+            pnlDadosCadastrais.add(lblCtps, posicionador);
 
-            txfIe = new JTextField(30);
+            txfCtps = new JTextField(18);
             posicionador = new GridBagConstraints();
             posicionador.gridy = 12;
             posicionador.gridx = 1;
             posicionador.anchor = GridBagConstraints.LINE_START;
-            pnlDadosCadastrais.add(txfIe, posicionador);
+            pnlDadosCadastrais.add(txfCtps, posicionador);
+
+            lblPis = new JLabel("Numero Pis:");
+            posicionador = new GridBagConstraints();
+            posicionador.gridy = 13;
+            posicionador.gridx = 0;
+            pnlDadosCadastrais.add(lblPis, posicionador);
+
+            txfPis = new JTextField(30);
+            posicionador = new GridBagConstraints();
+            posicionador.gridy = 13;
+            posicionador.gridx = 1;
+            posicionador.anchor = GridBagConstraints.LINE_START;
+            pnlDadosCadastrais.add(txfPis, posicionador);
 
             tbpAbas.addTab("Dados Cadastrais", pnlDadosCadastrais);
 
@@ -404,17 +438,17 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
             btnGravar = new JButton("Gravar");
             btnGravar.addActionListener(this);
             btnGravar.setFocusable(true);    //acessibilidade
-            btnGravar.setToolTipText("btnGravarFornecedor"); //acessibilidade
+            btnGravar.setToolTipText("btnGravarFuncionario"); //acessibilidade
             btnGravar.setMnemonic(KeyEvent.VK_G);
-            btnGravar.setActionCommand("botao_gravar_formulario_fornecedor");
+            btnGravar.setActionCommand("botao_gravar_formulario_funcionario");
 
             pnlSul.add(btnGravar);
 
             btnCancelar = new JButton("Cancelar");
             btnCancelar.addActionListener(this);
             btnCancelar.setFocusable(true);    //acessibilidade
-            btnCancelar.setToolTipText("btnCancelarFornecedor"); //acessibilidade
-            btnCancelar.setActionCommand("botao_cancelar_formulario_fornecedor");
+            btnCancelar.setToolTipText("btnCancelarFuncionario"); //acessibilidade
+            btnCancelar.setActionCommand("botao_cancelar_formulario_funcionario");
 
             pnlSul.add(btnCancelar);
 
@@ -426,19 +460,19 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
         public void actionPerformed(ActionEvent arg0) {
             if (arg0.getActionCommand().equals(btnGravar.getActionCommand())) {
 
-                Fornecedor f = getFornecedorbyFormulario();//recupera os dados do formulÃ¡rio
+                Funcionario f = getFuncionariobyFormulario();//recupera os dados do formulÃ¡rio
 
                 if (f != null) {
                     try {
-                        //System.out.println("DADOS FORNECEDOR" + f.getCpf());
-                        pnlAFornecedor.getControle().getConexaoJDBC().persist(f);
+                        //System.out.println("DADOS FUNCIONARIO: " + f.getCpf());
+                        pnlAFuncionario.getControle().getConexaoJDBC().persist(f);
 
-                        JOptionPane.showMessageDialog(this, "Fornecedor armazenado!", "Salvar", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Funcionario armazenado!", "Salvar", JOptionPane.INFORMATION_MESSAGE);
 
-                        pnlAFornecedor.showTela("tela_fornecedor_listagem");
+                        pnlAFuncionario.showTela("tela_funcionario_listagem");
 
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "Erro ao salvar Fornecedor! : " + ex.getMessage(), "Salvar", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Erro ao salvar Funcionario! : " + ex.getMessage(), "Salvar", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     }
 
@@ -449,8 +483,8 @@ public class JPanelAFornecedorFormulario extends JPanel implements ActionListene
 
 
             } else if (arg0.getActionCommand().equals(btnCancelar.getActionCommand())) {
-                pnlAFornecedor.showTela("tela_fornecedor_listagem");
+                pnlAFuncionario.showTela("tela_funcionario_listagem");
             }
         }
+    }
 
-}

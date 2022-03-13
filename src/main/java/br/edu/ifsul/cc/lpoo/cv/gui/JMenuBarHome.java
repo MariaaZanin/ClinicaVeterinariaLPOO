@@ -17,6 +17,7 @@ public class JMenuBarHome extends JMenuBar implements ActionListener{
 
     private JMenu menuCadastro;
     private JMenuItem menuItemFornecedor;
+    private JMenuItem menuItemFuncionario;
 
     private Controle controle;
 
@@ -64,6 +65,14 @@ public class JMenuBarHome extends JMenuBar implements ActionListener{
         menuItemFornecedor.setActionCommand("menu_fornecedor");
         menuCadastro.add(menuItemFornecedor);
 
+        menuItemFuncionario = new JMenuItem("Funcionario");
+        menuItemFuncionario.setToolTipText("Funcionario"); //acessibilidade
+        menuItemFuncionario.setFocusable(true); //acessibilidade
+
+        menuItemFuncionario.addActionListener(this);
+        menuItemFuncionario.setActionCommand("menu_funcionario");
+        menuCadastro.add(menuItemFuncionario);
+
         this.add(menuArquivo);
         this.add(menuCadastro);
 
@@ -83,6 +92,9 @@ public class JMenuBarHome extends JMenuBar implements ActionListener{
         }else if(e.getActionCommand().equals(menuItemFornecedor.getActionCommand())){
             //se o usuario clicou no menuitem Usuario
             controle.showTela("tela_fornecedor");
+        }else if(e.getActionCommand().equals(menuItemFuncionario.getActionCommand())) {
+            //se o usuario clicou no menuitem Usuario
+            controle.showTela("tela_funcionario");
         }else if(e.getActionCommand().equals(menuItemLogout.getActionCommand())){
             controle.showTela("tela_autenticacao");
         }

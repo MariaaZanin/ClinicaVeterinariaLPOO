@@ -1,4 +1,3 @@
-
 package br.edu.ifsul.cc.lpoo.cv.gui;
 
 
@@ -29,7 +28,7 @@ public class JFramePrincipal extends JFrame implements WindowListener {
 
         this.setTitle("Sistema para CRUD - Clinica Veterinaria"); //seta o título do jframe
 
-        this.setMinimumSize(new Dimension(600,600)); //tamanho minimo quando for reduzido.
+        this.setMinimumSize(new Dimension(700,600)); //tamanho minimo quando for reduzido.
 
         this.setExtendedState(JFrame.MAXIMIZED_BOTH); // por padrão abre maximizado.
 

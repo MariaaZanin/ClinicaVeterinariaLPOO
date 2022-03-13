@@ -1,7 +1,7 @@
-package br.edu.ifsul.cc.lpoo.cv.gui.fornecedor.acessibilidade;
+package br.edu.ifsul.cc.lpoo.cv.gui.funcionario.acessibilidade;
 
 import br.edu.ifsul.cc.lpoo.cv.Controle;
-import br.edu.ifsul.cc.lpoo.cv.model.Fornecedor;
+import br.edu.ifsul.cc.lpoo.cv.model.Funcionario;
 import br.edu.ifsul.cc.lpoo.cv.model.dao.PersistenciaJDBC;
 
 import java.awt.BorderLayout;
@@ -17,10 +17,9 @@ import java.util.Vector;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+public class JPanelAFuncionarioListagem extends JPanel implements ActionListener {
 
-public class JPanelAFornecedorListagem extends JPanel implements ActionListener {
-
-        private JPanelAFornecedor pnlAFornecedor;
+        private JPanelAFuncionario pnlAFuncionario;
         private Controle controle;
 
         private BorderLayout borderLayout;
@@ -41,9 +40,9 @@ public class JPanelAFornecedorListagem extends JPanel implements ActionListener 
 
         private SimpleDateFormat format;
 
-        public JPanelAFornecedorListagem(JPanelAFornecedor pnlAFornecedor, Controle controle){
+        public JPanelAFuncionarioListagem(JPanelAFuncionario pnlAFuncionario, Controle controle){
 
-            this.pnlAFornecedor = pnlAFornecedor;
+            this.pnlAFuncionario = pnlAFuncionario;
             this.controle = controle;
 
             initComponents();
@@ -54,12 +53,12 @@ public class JPanelAFornecedorListagem extends JPanel implements ActionListener 
 
             model.setRowCount(0);//elimina as linhas existentes (reset na tabela)
             try{
-                List<Fornecedor> listFornecedor = controle.getConexaoJDBC().listFornecedor();
-                for(Fornecedor f : listFornecedor){
-                    model.addRow(new Object[]{f.getNome(), f.getCpf(), f.getCnpj(), f.getIe()});
+                List<Funcionario> listFuncionario = controle.getConexaoJDBC().listFuncionario();
+                for(Funcionario f : listFuncionario){
+                    model.addRow(new Object[]{f.getNome(), f.getCpf(), f.getCargo(), f.getNumero_ctps(), f.getNumero_pis()});
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro ao listar Fornecedores -:"+ex.getLocalizedMessage(), "Fornecedores", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Erro ao listar Funcionarios:"+ex.getLocalizedMessage(), "Funcionarios", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
             }
         }
@@ -72,7 +71,7 @@ public class JPanelAFornecedorListagem extends JPanel implements ActionListener 
             pnlNorte = new JPanel();
             pnlNorte.setLayout(new FlowLayout());
 
-            lblFiltro = new JLabel("Filtrar por nome de Fornecedor:");
+            lblFiltro = new JLabel("Filtrar por nome de Funcionario:");
             pnlNorte.add(lblFiltro);
 
             txfFiltro = new JTextField(20);
@@ -94,7 +93,7 @@ public class JPanelAFornecedorListagem extends JPanel implements ActionListener 
             tblListagem =  new JTable();
 
             modeloTabela = new DefaultTableModel(
-                    new String [] { "Nome", "CPF", "CNPJ", "IE",}, 0);
+                    new String [] { "Nome", "CPF", "Cargo", "Numero CTPS", "Numero PIS",}, 0);
 
             tblListagem.setModel(modeloTabela);
             scpListagem.setViewportView(tblListagem);
@@ -145,9 +144,9 @@ public class JPanelAFornecedorListagem extends JPanel implements ActionListener 
 
             if(arg0.getActionCommand().equals(btnNovo.getActionCommand())){
 
-                pnlAFornecedor.showTela("tela_fornecedor_formulario");
+                pnlAFuncionario.showTela("tela_funcionario_formulario");
 
-                pnlAFornecedor.getFormulario().setFornecedorFormulario(null); //limpando o formulário.
+                pnlAFuncionario.getFormulario().setFuncionarioFormulario(null); //limpando o formulário.
 
             }else if(arg0.getActionCommand().equals(btnAlterar.getActionCommand())){
                 int indice = tblListagem.getSelectedRow();//recupera a linha selecionada
@@ -155,18 +154,17 @@ public class JPanelAFornecedorListagem extends JPanel implements ActionListener 
                 if(indice > -1){
                     try {
                         PersistenciaJDBC persistencia = new PersistenciaJDBC();
-                        Fornecedor f = new Fornecedor();
+                        Funcionario f = new Funcionario();
 
                         DefaultTableModel model = (DefaultTableModel) tblListagem.getModel(); //recuperacao do modelo da table
                         Vector linha = (Vector) model.getDataVector().get(indice);//recupera o vetor de dados da linha selecionada
                         System.out.println("Linha: " + linha);
-                        f = (Fornecedor) persistencia.find(f.getClass(), linha.get(1));
-                        //Fornecedor f = (Fornecedor) linha; //model.addRow(new Object[]{u, u.getNome(), ...
-                        System.out.println("Fornecedor: " + f);
-                        pnlAFornecedor.showTela("tela_fornecedor_formulario");
-                        pnlAFornecedor.getFormulario().setFornecedorFormulario(f);
+                        f = (Funcionario) persistencia.find(f.getClass(), linha.get(1));
+                        System.out.println("Funcionario: " + f);
+                        pnlAFuncionario.showTela("tela_funcionario_formulario");
+                        pnlAFuncionario.getFormulario().setFuncionarioFormulario(f);
                     }catch (Exception ex){
-                        JOptionPane.showMessageDialog(this, "Erro ao editar Fornecedor -:"+ex.getLocalizedMessage(), "Fornecedores", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Erro ao editar Funcionario -:"+ex.getLocalizedMessage(), "Funcionarios", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     }
                 }else{
@@ -181,14 +179,15 @@ public class JPanelAFornecedorListagem extends JPanel implements ActionListener 
                         DefaultTableModel model =  (DefaultTableModel) tblListagem.getModel(); //recuperacao do modelo da table
                         Vector linha = (Vector) model.getDataVector().get(indice);//recupera o vetor de dados da linha selecionada
                         String s = (String) linha.get(1);
-                        Fornecedor f = new Fornecedor();
+                        Funcionario f = new Funcionario();
                         PersistenciaJDBC persistencia = new PersistenciaJDBC();
-                        f = (Fornecedor) persistencia.find(f.getClass(), s);
-                        pnlAFornecedor.getControle().getConexaoJDBC().remover(f);
-                        JOptionPane.showMessageDialog(this, "Fornecedor removido!", "Fornecedor", JOptionPane.INFORMATION_MESSAGE);
+                        //System.out.println(linha);
+                        f = (Funcionario) persistencia.find(f.getClass(), s);
+                        pnlAFuncionario.getControle().getConexaoJDBC().remover(f);
+                        JOptionPane.showMessageDialog(this, "Funcionario removido!", "Funcionario", JOptionPane.INFORMATION_MESSAGE);
                         populaTable(); //refresh na tabela
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "Erro ao remover Fornecedor -:"+ex.getLocalizedMessage(), "Fornecedores", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Erro ao remover Funcionario -:"+ex.getLocalizedMessage(), "Funcionarios", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     }
                 }else{
@@ -217,5 +216,5 @@ public class JPanelAFornecedorListagem extends JPanel implements ActionListener 
                 }
             });
         }
-}
 
+}

@@ -1,8 +1,6 @@
 package br.edu.ifsul.cc.lpoo.cv.model.dao;
 
-import br.edu.ifsul.cc.lpoo.cv.model.Fornecedor;
-import br.edu.ifsul.cc.lpoo.cv.model.Produto;
-import br.edu.ifsul.cc.lpoo.cv.model.Receita;
+import br.edu.ifsul.cc.lpoo.cv.model.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -65,9 +63,14 @@ public class PersistenciaJPA implements InterfacePersistencia {
     }
 
     @Override
-    public Fornecedor doLogin(String nome, String senha) throws Exception {
+    public List<Funcionario> listFuncionario() throws Exception {
+        throw new UnsupportedOperationException("Funcionalidade indisponivel no momento.");
+    }
 
-        List<Fornecedor> list = entity.createNamedQuery("Pessoa.login").setParameter("paramN", nome).setParameter("paramS", senha).getResultList();
+    @Override
+    public Pessoa doLogin(String cpf, String senha) throws Exception {
+
+        List<Fornecedor> list = entity.createNamedQuery("Pessoa.login").setParameter("paramN", cpf).setParameter("paramS", senha).getResultList();
         if(list.isEmpty()){
             return null;
         }else{

@@ -1,5 +1,9 @@
 package br.edu.ifsul.cc.lpoo.cv;
 
+import br.edu.ifsul.cc.lpoo.cv.gui.funcionario.JPanelFuncionario;
+import br.edu.ifsul.cc.lpoo.cv.gui.funcionario.acessibilidade.JPanelAFuncionario;
+import br.edu.ifsul.cc.lpoo.cv.model.Funcionario;
+import br.edu.ifsul.cc.lpoo.cv.model.Pessoa;
 import br.edu.ifsul.cc.lpoo.cv.model.dao.PersistenciaJDBC;
 import br.edu.ifsul.cc.lpoo.cv.gui.JFramePrincipal;
 import br.edu.ifsul.cc.lpoo.cv.gui.JMenuBarHome;
@@ -25,7 +29,10 @@ public class Controle {
     private JPanelFornecedor  pnlFornecedor; // painel de manutencao para fornecedor
     private JPanelAFornecedor pnlAFornecedor; // painel de manutencao para fornecedor
 
+    private JPanelFuncionario pnlFuncionario; // painel de manutencao para funcionario
+    private JPanelAFuncionario pnlAFuncionario; // painel de manutencao para funcionario
 
+    //construtor
     public Controle(){
 
     }
@@ -64,11 +71,18 @@ public class Controle {
 
         pnlAFornecedor = new JPanelAFornecedor(this);
 
+        pnlFuncionario = new JPanelFuncionario(this);
+
+        pnlAFuncionario = new JPanelAFuncionario(this);
+
         frame.addTela(pnlAutenticacao, "tela_autenticacao");
         frame.addTela(pnlHome, "tela_home");
 
         frame.addTela(pnlAFornecedor, "tela_fornecedor");//carta 3 - poderia adicionar opcionalmente: pnlJogador
         frame.addTela(pnlFornecedor, "tela_fornecedor_designer");//carta 3 - poderia adicionar opcionalmente: pnlJogador
+
+        frame.addTela(pnlAFuncionario, "tela_funcionario");//carta 3 - poderia adicionar opcionalmente: pnlJogador
+        frame.addTela(pnlFuncionario, "tela_funcionario_designer");//carta 3 - poderia adicionar opcionalmente: pnlJogador
 
         frame.showTela("tela_autenticacao");
 
@@ -80,12 +94,11 @@ public class Controle {
     public void autenticar(String cpf, String senha) {
 
         try{
-            Fornecedor f =  conexaoJDBC.doLogin(cpf, senha);
+            Pessoa p =  conexaoJDBC.doLogin(cpf, senha);
 
-            if(f != null){
+            if(p != null){
 
-
-                JOptionPane.showMessageDialog(pnlAutenticacao, "CPF "+ f.getCpf() +" autenticado com sucesso!", "Autenticação", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(pnlAutenticacao, "CPF "+ p.getCpf() +" autenticado com sucesso!", "Autenticação", JOptionPane.INFORMATION_MESSAGE);
 
                 frame.setJMenuBar(menuBar);
                 frame.showTela("tela_home");
@@ -103,15 +116,14 @@ public class Controle {
     public void showTela(String nomeTela){
 
         if(nomeTela.equals("tela_autenticacao")){
-
             //pnlAutenticacao.cleanForm();
-            frame.showTela(nomeTela);
             pnlAutenticacao.requestFocus();
-
-        }else{
+        }else if(nomeTela.equals("tela_fornecedor")){
             pnlAFornecedor.showTela("tela_fornecedor_listagem");
-            frame.showTela(nomeTela);
+        } else{
+            pnlAFuncionario.showTela("tela_funcionario_listagem");
         }
+        frame.showTela(nomeTela);
     }
 
     /**
