@@ -1,7 +1,8 @@
-package br.edu.ifsul.cc.lpoo.cv.gui.funcionario.acessibilidade;
+package br.edu.ifsul.cc.lpoo.cv.gui.produto.acessibilidade;
 
 import br.edu.ifsul.cc.lpoo.cv.Controle;
-import br.edu.ifsul.cc.lpoo.cv.model.Funcionario;
+import br.edu.ifsul.cc.lpoo.cv.gui.produto.acessibilidade.JPanelAProduto;
+import br.edu.ifsul.cc.lpoo.cv.model.Produto;
 import br.edu.ifsul.cc.lpoo.cv.model.dao.PersistenciaJDBC;
 
 import java.awt.BorderLayout;
@@ -17,9 +18,10 @@ import java.util.Vector;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-public class JPanelAFuncionarioListagem extends JPanel implements ActionListener {
 
-        private JPanelAFuncionario pnlAFuncionario;
+public class JPanelAProdutoListagem extends JPanel implements ActionListener {
+
+        private JPanelAProduto pnlAProduto;
         private Controle controle;
 
         private BorderLayout borderLayout;
@@ -40,25 +42,26 @@ public class JPanelAFuncionarioListagem extends JPanel implements ActionListener
 
         private SimpleDateFormat format;
 
-        public JPanelAFuncionarioListagem(JPanelAFuncionario pnlAFuncionario, Controle controle){
+        public JPanelAProdutoListagem(JPanelAProduto pnlAProduto, Controle controle){
 
-            this.pnlAFuncionario = pnlAFuncionario;
+            this.pnlAProduto = pnlAProduto;
             this.controle = controle;
 
             initComponents();
         }
 
-        public void populaTable(){
+       public void populaTable(){
             DefaultTableModel model =  (DefaultTableModel) tblListagem.getModel();//recuperacao do modelo da tabela
 
             model.setRowCount(0);//elimina as linhas existentes (reset na tabela)
             try{
-                List<Funcionario> listFuncionario = controle.getConexaoJDBC().listFuncionario();
-                for(Funcionario f : listFuncionario){
-                    model.addRow(new Object[]{f.getNome(), f.getCpf(), f.getCargo(), f.getNumero_ctps(), f.getNumero_pis()});
+                List<Produto> listProduto = controle.getConexaoJDBC().listProdutos();
+                for(Produto p : listProduto){
+                    System.out.println(p.getTipoProduto());
+                    model.addRow(new Object[]{p.getNome(), p.getId(), p.getQuantidade(), p.getTipoProduto(), p.getValor(), p.getFornecedor().getCpf()});
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro ao listar Funcionarios:"+ex.getLocalizedMessage(), "Funcionarios", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Erro ao listar produtos:"+ex.getLocalizedMessage(), "Produtos", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
             }
         }
@@ -71,7 +74,7 @@ public class JPanelAFuncionarioListagem extends JPanel implements ActionListener
             pnlNorte = new JPanel();
             pnlNorte.setLayout(new FlowLayout());
 
-            lblFiltro = new JLabel("Filtrar por nome de Funcionario:");
+            lblFiltro = new JLabel("Filtrar por nome de Produto:");
             pnlNorte.add(lblFiltro);
 
             txfFiltro = new JTextField(20);
@@ -93,7 +96,7 @@ public class JPanelAFuncionarioListagem extends JPanel implements ActionListener
             tblListagem =  new JTable();
 
             modeloTabela = new DefaultTableModel(
-                    new String [] { "Nome", "CPF", "Cargo", "Numero CTPS", "Numero PIS",}, 0);
+                    new String [] { "Nome", "ID", "Quantidade", "Tipo Produto", "Valor", "Fornecedor",}, 0);
 
             tblListagem.setModel(modeloTabela);
             scpListagem.setViewportView(tblListagem);
@@ -144,22 +147,22 @@ public class JPanelAFuncionarioListagem extends JPanel implements ActionListener
 
             if(arg0.getActionCommand().equals(btnNovo.getActionCommand())){
 
-                pnlAFuncionario.showTela("tela_funcionario_formulario");
+                pnlAProduto.showTela("tela_produto_formulario");
 
-                pnlAFuncionario.getFormulario().setFuncionarioFormulario(null); //limpando o formulário.
+                pnlAProduto.getFormulario().setProdutoFormulario(null); //limpando o formulário.
 
             }else if(arg0.getActionCommand().equals(btnAlterar.getActionCommand())){
                 int indice = tblListagem.getSelectedRow();//recupera a linha selecionada
                 if(indice > -1){
                     try {
-                        Funcionario f = new Funcionario();
+                        Produto p = new Produto();
                         DefaultTableModel model = (DefaultTableModel) tblListagem.getModel(); //recuperacao do modelo da table
                         Vector linha = (Vector) model.getDataVector().get(indice);//recupera o vetor de dados da linha selecionada
-                        f = (Funcionario) controle.getConexaoJDBC().find(f.getClass(), linha.get(1));
-                        pnlAFuncionario.showTela("tela_funcionario_formulario");
-                        pnlAFuncionario.getFormulario().setFuncionarioFormulario(f);
+                        p = (Produto) controle.getConexaoJDBC().find(p.getClass(), linha.get(1));
+                        pnlAProduto.showTela("tela_produto_formulario");
+                        pnlAProduto.getFormulario().setProdutoFormulario(p);
                     }catch (Exception ex){
-                        JOptionPane.showMessageDialog(this, "Erro ao editar Funcionario -:"+ex.getLocalizedMessage(), "Funcionarios", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Erro ao editar Produto -:"+ex.getLocalizedMessage(), "Produtos", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     }
                 }else{
@@ -173,14 +176,14 @@ public class JPanelAFuncionarioListagem extends JPanel implements ActionListener
                     try {
                         DefaultTableModel model =  (DefaultTableModel) tblListagem.getModel(); //recuperacao do modelo da table
                         Vector linha = (Vector) model.getDataVector().get(indice);//recupera o vetor de dados da linha selecionada
-                        String s = (String) linha.get(1);
-                        Funcionario f = new Funcionario();
-                        f = (Funcionario) controle.getConexaoJDBC().find(f.getClass(), s);
-                        pnlAFuncionario.getControle().getConexaoJDBC().remover(f);
-                        JOptionPane.showMessageDialog(this, "Funcionario removido!", "Funcionario", JOptionPane.INFORMATION_MESSAGE);
+                        Integer s = (Integer) linha.get(1);
+                        Produto p = new Produto();
+                        p = (Produto) controle.getConexaoJDBC().find(p.getClass(), s);
+                        pnlAProduto.getControle().getConexaoJDBC().remover(p);
+                        JOptionPane.showMessageDialog(this, "Produto removido!", "Produto", JOptionPane.INFORMATION_MESSAGE);
                         populaTable(); //refresh na tabela
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "Erro ao remover Funcionario -:"+ex.getLocalizedMessage(), "Funcionarios", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Erro ao remover Produto -:"+ex.getLocalizedMessage(), "Produtos", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                     }
                 }else{
@@ -209,5 +212,6 @@ public class JPanelAFuncionarioListagem extends JPanel implements ActionListener
                 }
             });
         }
+
 
 }

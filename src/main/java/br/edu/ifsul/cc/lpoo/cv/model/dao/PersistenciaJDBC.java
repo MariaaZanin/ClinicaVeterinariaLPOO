@@ -199,7 +199,6 @@ public class PersistenciaJDBC implements InterfacePersistencia{
 
         if(o instanceof Produto) {
             Produto p = (Produto) o; // Converter o "o" para Produto
-
             // Descobrir qual operacao deve realizar (insert ou update)
             if(p.getId() == null) {
                 PreparedStatement ps = this.con.prepareStatement("insert into tb_produto (id, nome, valor, quantidade, tipoproduto, fornecedor_id) values (nextval('seq_produto'), ?, ?, ?, ?, ?);",
@@ -387,9 +386,9 @@ public class PersistenciaJDBC implements InterfacePersistencia{
         }else if(o instanceof Produto){
             Produto p = (Produto) o; //converter o para o e que é do tipo Produto
 
-            PreparedStatement ps2 = this.con.prepareStatement("delete from tb_receita_produto where produto_id = ? ");// deleta a informação da tabela receita_produto
-            ps2.setInt(1, p.getId());
-            ps2.execute();
+            //PreparedStatement ps2 = this.con.prepareStatement("delete from tb_receita_produto where produto_id = ? ");// deleta a informação da tabela receita_produto
+            //ps2.setInt(1, p.getId());
+            //ps2.execute();
 
             PreparedStatement ps = this.con.prepareStatement("delete from tb_produto where id = ? ");
             ps.setInt(1, p.getId());
@@ -423,7 +422,7 @@ public class PersistenciaJDBC implements InterfacePersistencia{
 
         List<Produto> listaProduto = null;
 
-        PreparedStatement ps = this.con.prepareStatement("select id, nome, valor, quantidade from tb_produto order by id asc;");
+        PreparedStatement ps = this.con.prepareStatement("select id, nome, valor, quantidade, tipoproduto, fornecedor_id from tb_produto order by id asc;");
 
         ResultSet rs = ps.executeQuery();
 
@@ -435,6 +434,10 @@ public class PersistenciaJDBC implements InterfacePersistencia{
             end.setNome(rs.getString("nome"));
             end.setValor(rs.getFloat("valor"));
             end.setQuantidade(rs.getFloat("quantidade"));
+            end.setTipoProduto(TipoProduto.valueOf(rs.getString("tipoproduto")));
+            Fornecedor f = new Fornecedor();
+            f.setCpf(rs.getString("fornecedor_id"));
+            end.setFornecedor(f);
 
             listaProduto.add(end); // Adiciona na lista o objeto que contém as informações obtidas do banco pelo ResultSet
         }
@@ -471,6 +474,7 @@ public class PersistenciaJDBC implements InterfacePersistencia{
             List<Receita> lista = new ArrayList<>();
 
             PreparedStatement ps = this.con.prepareStatement("select id, orientacao, consulta_id from tb_receita order by id asc");
+
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -509,8 +513,7 @@ public class PersistenciaJDBC implements InterfacePersistencia{
             }
             return lista;
 
-        }else{
-            if(c == Produto.class){
+        } else if(c == Produto.class){
                 List<Produto> listaProduto = new ArrayList<>();
                 PreparedStatement ps = this.con.prepareStatement("select id, nome, quantidade, tipoproduto, valor, fornecedor_id from tb_produto order by id asc");
 
@@ -532,9 +535,39 @@ public class PersistenciaJDBC implements InterfacePersistencia{
                     listaProduto.add(p);
                 }
                 return listaProduto;
+
+        } else if (c == Fornecedor.class) {
+            List<Fornecedor> listaFornecedor = new ArrayList<>();
+
+            PreparedStatement ps = this.con.prepareStatement("select p.cpf, p.cep, p.complemento," +
+                    " p.data_nascimento, p.email, p.endereco, p.nome, p.numero_celular, p.rg,f.cnpj,f.ie , " +
+                    "p.senha from tb_fornecedor f join tb_pessoa p on p.cpf = f.cpf");
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Fornecedor f = new Fornecedor();
+                f.setCpf(rs.getString("cpf"));
+                f.setCep(rs.getString("cep"));
+                f.setComplemento(rs.getString("complemento"));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(rs.getDate("data_nascimento"));
+                f.setData_nascimento(calendar);
+                f.setEmail(rs.getString("email"));
+                f.setEndereco(rs.getString("endereco"));
+                f.setNome(rs.getString("nome"));
+                f.setNumero_celular(rs.getString("numero_celular"));
+                f.setRg(rs.getString("rg"));
+                f.setSenha(rs.getString("senha"));
+                f.setCnpj(rs.getString("cnpj"));
+                f.setIe(rs.getString("ie"));
+
+                listaFornecedor.add(f);
             }
+            return listaFornecedor;
         }
-        return null;
+
+            return null;
     }
 
     @Override
@@ -622,22 +655,25 @@ public class PersistenciaJDBC implements InterfacePersistencia{
     @Override
     public Pessoa doLogin(String cpf, String senha) throws Exception {
 
-        Pessoa p = null;
+        Pessoa f = null;
 
         PreparedStatement ps =
-                this.con.prepareStatement("select p.cpf, p.senha from tb_pessoa p where p.cpf = ? and p.senha = ? ");
+                this.con.prepareStatement("select p.cpf, p.nome, p.senha from tb_pessoa p " +
+                        " inner join tb_funcionario f ON p.cpf = f.cpf where p.cpf = ? and p.senha = ? ");
 
         ps.setString(1, cpf);
         ps.setString(2, senha);
 
-        ResultSet rs = ps.executeQuery();//o ponteiro do REsultSet inicialmente está na linha -1
+        ResultSet rs = ps.executeQuery();
 
-        if(rs.next()){//se a matriz (ResultSet) tem uma linha
-            p = new Pessoa();
-            p.setCpf(rs.getString("cpf"));
+        if(rs.next()){
+            f = new Pessoa();
+            f.setCpf(rs.getString("cpf"));
+            f.setNome(rs.getString("nome"));
+            f.setSenha(rs.getString("senha"));
         }
 
         ps.close();
-        return p;
+        return f;
     }
 }

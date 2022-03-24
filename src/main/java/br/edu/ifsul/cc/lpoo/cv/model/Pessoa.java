@@ -9,7 +9,10 @@ import javax.persistence.*;
 @DiscriminatorColumn(name = "tipo")
 @NamedQueries({
         @NamedQuery(name="Pessoa.login",
-                query="SELECT p From Pessoa p where p.cpf = :paramN and p.senha = :paramS")
+                query = "select p.cpf, p.senha from Pessoa p inner join Funcionario f ON p.cpf = f.cpf where p.cpf = :paramN and p.senha = :paramS")
+        //query = "select p.cpf, p.senha from Pessoa p inner join Funcionario f ON p.cpf = f.cpf where p.cpf = :paramN and p.senha = :paramS",
+        //                resultClass= Funcionario.class)
+        //query="SELECT p From Pessoa p where p.cpf = :paramN and p.senha = :paramS")
 })
 public class Pessoa {
 

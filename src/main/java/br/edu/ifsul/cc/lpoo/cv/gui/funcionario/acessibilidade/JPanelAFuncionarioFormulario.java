@@ -229,7 +229,6 @@ public class JPanelAFuncionarioFormulario extends JPanel implements ActionListen
                 txfCep.setText(funcionario.getCep());
                 txfComplemento.setText(funcionario.getComplemento());
                 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                //System.out.println("FORMATO: " + formato.format(fornecedor.getData_nascimento().getTime()));
                 txfDataNascimento.setText(formato.format(funcionario.getData_nascimento().getTime()));
                 txfEmail.setText(funcionario.getEmail());
                 txfEndereco.setText(funcionario.getEndereco());
@@ -470,11 +469,8 @@ public class JPanelAFuncionarioFormulario extends JPanel implements ActionListen
 
                 if (f != null) {
                     try {
-                        //System.out.println("DADOS FUNCIONARIO: " + f.getCpf());
                         pnlAFuncionario.getControle().getConexaoJDBC().persist(f);
-
                         JOptionPane.showMessageDialog(this, "Funcionario armazenado!", "Salvar", JOptionPane.INFORMATION_MESSAGE);
-
                         pnlAFuncionario.showTela("tela_funcionario_listagem");
 
                     } catch (Exception ex) {

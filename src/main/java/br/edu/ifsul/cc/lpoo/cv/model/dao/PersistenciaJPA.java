@@ -35,12 +35,16 @@ public class PersistenciaJPA implements InterfacePersistencia {
 
     @Override
     public void persist(Object o) throws Exception {
-
+        entity.getTransaction().begin();// abrir a transacao.
+        entity.persist(o); //realiza o insert ou update.
+        entity.getTransaction().commit(); //comita a transacao (comando sql)
     }
 
     @Override
     public void remover(Object o) throws Exception {
-
+//        entity.getTransaction().begin();// abrir a transacao.
+//        entity.remove(o); //realiza o delete
+//        entity.getTransaction().commit(); //comita a transacao (comando sql)
     }
 
     public List mostraTudo(Class c) throws Exception{
@@ -68,14 +72,24 @@ public class PersistenciaJPA implements InterfacePersistencia {
     }
 
     @Override
-    public Pessoa doLogin(String cpf, String senha) throws Exception {
-
-        List<Fornecedor> list = entity.createNamedQuery("Pessoa.login").setParameter("paramN", cpf).setParameter("paramS", senha).getResultList();
-        if(list.isEmpty()){
+    public Funcionario doLogin(String cpf, String senha) throws Exception {
+        try {
+            List<Funcionario> list = entity.createNamedQuery("Pessoa.login").setParameter("paramN", cpf).setParameter("paramS", senha).getResultList();
+            System.out.println("list = " + list);
+            if(list.isEmpty()){
+                System.out.println("triste");
+                return null;
+            }else{
+                System.out.println("feliz");
+                return list.get(0);
+            }
+        }catch(Exception error){
+            System.out.println(error);
             return null;
-        }else{
-            return list.get(0);
         }
+
+        //System.out.println(entity.createNamedQuery("Pessoa.login").getResultList());
+        //List<Funcionario> list = entity.createNamedQuery("Pessoa.login").getResultList();
 
     }
 }
